@@ -1,10 +1,31 @@
 package id.example.crudfirebase.utils
 
-import com.google.firebase.firestore.FirebaseFirestore
+import android.content.Context
+import android.content.Context.MODE_PRIVATE
 
-val fLibrary = FirebaseFirestore.getInstance().collection("lbrary")
+val Context.preference get() = getSharedPreferences("pref", MODE_PRIVATE)
 
-val fdocument = fLibrary.document("data")
-val fbook = fdocument.collection("book")
-val fcustomer = fdocument.collection("customer")
+fun Context.saveToPref(value: Any, key: String) {
+    when(value) {
+        is String -> preference.edit().putString(key, value).apply()
+        is Int -> preference.edit().putInt(key, value).apply()
+        is Long -> preference.edit().putLong(key, value).apply()
+        is Boolean -> preference.edit().putBoolean(key, value).apply()
+    }
+}
+
+fun Context.getStrPref(key: String): String? = preference.getString(key, null)
+
+val Context.email get() = getStrPref("email")
+
+fun Context.clearPref() {
+    val p = getSharedPreferences("pref", MODE_PRIVATE)
+    p.edit().clear().apply()
+}
+
+fun Context.removePref(key: String) {
+    val p = preference
+    p.edit().remove(key).apply()
+}
+
 

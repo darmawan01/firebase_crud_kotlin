@@ -9,7 +9,7 @@ import android.widget.TextView
 import id.example.crudfirebase.R
 import id.example.crudfirebase.models.Book
 
-class BookAdapter(private val books: MutableList<Book>,private val listener: (Book) -> Unit): RecyclerView.Adapter<BookAdapter.ViewHolder>() {
+class BookAdapter(private val books: MutableList<Book>, private val listener: (Book) -> Unit): RecyclerView.Adapter<BookAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder  = ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.rc_book_list, parent, false))
 

@@ -12,4 +12,13 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
+    <string name="click_to_upload">Click To Upload</string>
+    <string name="clijslf">Click to upload !</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="i_don_t_have_account_resgiter">I don\'t have account, Resgiter !</string>
+    <string name="login_switch">I have account, Login !</string>
+    <string name="register">Register</string>
+    <string name="logout">Logout</string>
 </resources>
