@@ -1,7 +1,5 @@
 package id.example.crudfirebase.models
 
-import android.net.Uri
-
 data class Book (
     var id: String? = null,
     var name: String? = null,
