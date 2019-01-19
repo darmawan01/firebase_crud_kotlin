@@ -1,22 +1,15 @@
 package id.example.crudfirebase
 
-import android.app.ActionBar
 import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
-import android.text.Editable
 import android.util.Log.*
 import android.view.Gravity
 import android.view.MenuItem
-import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import com.bumptech.glide.Glide
 import com.esafirm.imagepicker.features.ImagePicker
 import com.esafirm.imagepicker.features.ReturnMode
@@ -43,7 +36,7 @@ class BookActivity : AppCompatActivity() {
         isEdit = intent.getBooleanExtra("isEdit", false)
 
         btn_save.setOnClickListener {
-            if (isEdit) update() else save()
+            prepareSave()
         }
 
         if (isEdit) receiveBook()
@@ -72,7 +65,7 @@ class BookActivity : AppCompatActivity() {
             img_layout.removeAllViews()
             images.addAll(ImagePicker.getImages(data))
 
-            images.mapIndexed { index, image ->
+            images.forEachIndexed { index, _ ->
 
                 val imageView = ImageView(this)
                 val layout = LinearLayout.LayoutParams(190, 160)
@@ -87,35 +80,28 @@ class BookActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
     }
 
-    private fun uploadImg(): MutableList<Uri> {
+    private fun prepareSave() {
 
-        val imgPath: MutableList<Uri> = mutableListOf()
+        val uris: MutableList<String> = mutableListOf()
 
-        images.forEach {
-            val path= Uri.fromFile(File(it.path))
+        images.forEach { image ->
+            val path= Uri.fromFile(File(image.path))
 
             fStorage
                 .child(UUID.randomUUID().toString())
                 .putFile(path)
-                .addOnSuccessListener { snapShot ->
-
-                    snapShot
-                        .storage
-                        .downloadUrl
-                        .addOnSuccessListener { url -> imgPath.add(url) }
-
-                    i("UPLOAD1", "Success upload ! ${imgPath}")
-
+                .addOnSuccessListener {
+                    i("UPLOAD", "Success upload !")
+                }
+                .addOnCompleteListener {task ->
+                    task.result?.storage?.downloadUrl?.addOnSuccessListener { url ->
+                        uris.add(url.toString())
+                        createProgress()
+                        if (uris.size == images.size) submit(uris)
+                    }
                 }
                 .removeOnFailureListener { e("UPLOAD", "Error upload ! ${it.message}") }
         }
-
-        images.clear() //clear old images
-        img_layout.removeAllViews() //remove all ImageView
-
-        createTV()
-        return imgPath
-
     }
 
     private fun receiveBook() {
@@ -127,41 +113,36 @@ class BookActivity : AppCompatActivity() {
         }
     }
 
-    private fun save(){
-        val path = uploadImg()
-
-        e("AHAHAH", "${path}")
+    private fun submit(uris: MutableList<String>){
 
         val book = Book().apply {
             name = txt_name.text.toString()
             writer = txt_writer.text.toString()
-            img_path = path
+            img_path = uris
         }
 
-        fbook.add(book)
-            .addOnSuccessListener {
-                Toast.makeText(this, "Data berhasil ditambahkan", Toast.LENGTH_LONG).show()
-            }
-            .addOnFailureListener {
-                e("Error Save", "Sorry bro gagagl ! ${it.message}")
-            }
-    }
-
-    private fun update() {
-        book.let {
-            it.name = txt_name.text.toString()
-            it.writer = txt_writer.text.toString()
+        if (isEdit) {
+            fbook
+                .document(book.id.toString())
+                .set(book)
+                .addOnSuccessListener {
+                    clear()
+                    Toast.makeText(this, "Data berhasil dirubah", Toast.LENGTH_LONG).show()
+                }
+                .addOnFailureListener {
+                    e("Error Save", "Sorry bro gagagl ! ${it.message}")
+                }
+        } else {
+            fbook
+                .add(book)
+                .addOnSuccessListener {
+                    clear()
+                    Toast.makeText(this, "Data berhasil ditambahkan", Toast.LENGTH_LONG).show()
+                }
+                .addOnFailureListener {
+                    e("Error Save", "Sorry bro gagagl ! ${it.message}")
+                }
         }
-
-        fbook
-            .document(book.id.toString())
-            .set(book)
-            .addOnSuccessListener {
-                Toast.makeText(this, "Data berhasil dirubah", Toast.LENGTH_LONG).show()
-            }
-            .addOnFailureListener {
-                e("Error Save", "Sorry bro gagagl ! ${it.message}")
-            }
     }
 
     private fun createTV() {
@@ -177,6 +158,18 @@ class BookActivity : AppCompatActivity() {
         img_layout.addView(textView)
     }
 
+    private fun createProgress() {
+        val progressBar = ProgressBar(this)
+        val layout = LinearLayout
+            .LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+            )
+        layout.gravity = Gravity.CENTER
+        progressBar.layoutParams = layout
+        img_layout.addView(progressBar)
+
+    }
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
 
         when (item?.itemId) {
@@ -188,5 +181,13 @@ class BookActivity : AppCompatActivity() {
                 return super.onOptionsItemSelected(item)
             }
         }
+    }
+
+    private fun clear() {
+        images.clear() //clear old images
+        img_layout.removeAllViews() //remove all ImageView
+        txt_name.setTag("")
+        txt_writer.setTag("")
+        createTV()
     }
 }

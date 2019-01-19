@@ -7,6 +7,7 @@ import android.support.v7.app.AlertDialog
 import android.util.Log.*
 import android.view.WindowManager
 import android.widget.Toast
+import id.example.crudfirebase.R.id.btn_login
 import id.example.crudfirebase.utils.*
 import kotlinx.android.synthetic.main.activity_login.*
 
@@ -62,6 +63,7 @@ class LoginActivity : AppCompatActivity() {
             }
             .addOnFailureListener {
                 e("ERRAUTH", "${it.message}")
+                Toast.makeText(this, "Login Gagal, ${it.message} !", Toast.LENGTH_SHORT).show()
             }
     }
 
@@ -76,7 +78,7 @@ class LoginActivity : AppCompatActivity() {
                     val builder = AlertDialog.Builder(this)
                     builder
                         .setMessage("Register berhasil. Login dengan akun ${it.user.email} ?")
-                        .setPositiveButton("Yes", { dialog, _ ->
+                        .setPositiveButton("Yes", { _ , _ ->
                             doLogin()
                         })
                         .setNegativeButton("No", { dialog, _ ->

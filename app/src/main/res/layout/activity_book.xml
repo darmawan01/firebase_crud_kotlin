@@ -8,27 +8,28 @@
         tools:context=".BookActivity">
 
 
-       <android.support.v7.widget.CardView
-               android:layout_width="match_parent"
-               android:layout_height="120dp"
-               android:id="@+id/img_upload">
+   <android.support.v7.widget.CardView
+           android:layout_width="match_parent"
+           android:layout_height="120dp"
+           android:id="@+id/img_upload"
+           tools:ignore="MissingConstraints">
 
-           <LinearLayout
-                   android:id="@+id/img_layout"
+       <LinearLayout
+               android:id="@+id/img_layout"
+               android:layout_width="match_parent"
+               android:layout_height="match_parent"
+               android:orientation="horizontal"
+               android:padding="10dp"
+               >
+
+           <TextView
+                   android:id="@+id/v_upload"
                    android:layout_width="match_parent"
                    android:layout_height="match_parent"
-                   android:orientation="horizontal"
-                   android:padding="10dp"
-                   >
+                   android:gravity="center"
+                   android:text="@string/click_to_upload"/>
 
-               <TextView
-                       android:id="@+id/v_upload"
-                       android:layout_width="match_parent"
-                       android:layout_height="match_parent"
-                       android:gravity="center"
-                       android:text="@string/click_to_upload"/>
-
-            </LinearLayout>
+        </LinearLayout>
    </android.support.v7.widget.CardView>
 
     <LinearLayout

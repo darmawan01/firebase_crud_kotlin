@@ -6,5 +6,5 @@ data class Book (
     var id: String? = null,
     var name: String? = null,
     var writer: String? = null,
-    var img_path: MutableList<Uri>? = null
+    var img_path: MutableList<String>? = null
 )
