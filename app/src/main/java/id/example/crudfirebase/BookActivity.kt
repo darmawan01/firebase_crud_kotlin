@@ -95,8 +95,11 @@ class BookActivity : AppCompatActivity() {
                 }
                 .addOnCompleteListener {task ->
                     task.result?.storage?.downloadUrl?.addOnSuccessListener { url ->
+
                         uris.add(url.toString())
+
                         createProgress()
+
                         if (uris.size == images.size) submit(uris)
                     }
                 }
